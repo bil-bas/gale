@@ -35,7 +35,7 @@ describe Gale::Frame do
   describe "transparent_color" do
     it "gets transparent color" do
       subject.each_frame do |frame|
-        frame.transparent_color.should eq Gosu::Color.rgb(253, 77, 211)
+        frame.transparent_color.should eq 0xfd4dd3
       end
     end
   end
@@ -57,15 +57,5 @@ describe Gale::Frame do
     end
   end
 
-  describe "to_image" do
-    it "creates a Gosu Image from the frame" do
-      subject.each do |frame|
-        image = frame.to_image
-        image.should be_a Gosu::Image
-        image.width.should eq 28
-        image.height.should eq 24
-        image.save "test_output/frame_#{frame.index}.png"
-      end
-    end
-  end
+
 end

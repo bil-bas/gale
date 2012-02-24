@@ -4,7 +4,7 @@ require 'rspec'
 
 $LOAD_PATH.unshift File.expand_path "../../lib", __FILE__
 
-require "gale"
+require "gale/gosu"
 
 COP_RANGED = File.expand_path("data/cop_ranged.gal", File.dirname(__FILE__))
 

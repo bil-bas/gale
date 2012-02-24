@@ -28,37 +28,22 @@ module Gale
       @name ||= begin
         buffer = FFI::Buffer.new Gale::STRING_BUFFER_SIZE
         length = Dll.frame_name file.send(:handle), index, buffer, buffer.size
-        buffer.get_string 0
+        buffer.get_string 0, length
       end
     end
 
     def delay
-      Dll.frame_info file.send(:handle), index, Dll::FrameInfo::DELAY_MS
+      @delay ||= Dll.frame_info file.send(:handle), index, Dll::FrameInfo::DELAY_MS
     end
 
     def transparent_color
-      color = Dll.frame_info file.send(:handle), index, Dll::FrameInfo::TRANSPARENT_COLOR
-      Gosu::Color.rgb (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff
+      @transparent_color ||= Dll.frame_info file.send(:handle), index, Dll::FrameInfo::TRANSPARENT_COLOR
     end
 
     def export_bitmap(filename)
       result = Dll.export_bitmap file.send(:handle), index, -1, filename
       raise "Export failed" if result == 0
       nil
-    end
-
-    def to_image
-      # Hack because I have no idea how to make #to_blob properly.
-      export_bitmap Gale::TMP_BITMAP
-
-      begin
-        image = Gosu::Image.new $window, Gale::TMP_BITMAP
-        image.clear :dest_select => transparent_color, :tolerance => 0.001
-      ensure
-        ::File.delete Gale::TMP_BITMAP
-      end
-
-      image
     end
   end
 end

@@ -9,6 +9,10 @@ module Gale
     attr_reader :handle
     protected :handle
 
+    class << self
+      alias_method :open, :new
+    end
+
     def initialize(filename)
       @handle = Dll.open filename
       if @handle.null?
@@ -57,23 +61,7 @@ module Gale
     def width; @width ||= Dll.info @handle, Dll::Info::WIDTH; end
     def bits_per_pixel; @bits_per_pixel ||= Dll.info @handle, Dll::Info::BPP; end
     def background_color
-      # BUG: assumes 24-bit.
-      color = Dll.info @handle, Dll::Info::BACKGROUND_COLOR
-      Gosu::Color.rgb (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff
-    end
-
-    # @option :column [Integer] (Float::INFINITY) Max number of columns to use.
-    def to_spritesheet(options = {})
-      columns = options[:columns] || Float::INFINITY
-      columns = [columns, size].min
-      rows = size.fdiv(columns).ceil
-
-      sheet = TexPlay.create_image $window, columns * width, rows * height
-      each do |frame|
-        row, column = frame.index.divmod columns
-        sheet.splice frame.to_image, column * width, row * height
-      end
-      sheet
+      @background_color ||= Dll.info @handle, Dll::Info::BACKGROUND_COLOR
     end
   end
 end

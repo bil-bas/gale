@@ -1,6 +1,3 @@
-require 'gosu'
-require 'texplay'
-
 require 'gale/dll'
 
 require 'gale/layer'

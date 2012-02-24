@@ -58,39 +58,13 @@ describe Gale::File do
 
     describe "background_color" do
       it "gets the color" do
-        subject.background_color.should eq Gosu::Color::WHITE
+        subject.background_color.should eq 0xffffff
       end
     end
 
     describe "bits_per_pixel" do
       it "gets the bbp" do
         subject.bits_per_pixel.should eq 24
-      end
-    end
-
-    describe "to_spritesheet" do
-      it "creates a sprite-sheet in a single animation row" do
-        sheet = subject.to_spritesheet
-        sheet.should be_a Gosu::Image
-        sheet.width.should eq 28 * 5
-        sheet.height.should eq 24
-        sheet.save "test_output/sheet_row.png"
-      end
-
-      it "creates a sprite-sheet in a grid" do
-        sheet = subject.to_spritesheet :columns => 3
-        sheet.should be_a Gosu::Image
-        sheet.width.should eq 28 * 3
-        sheet.height.should eq 24 * 2
-        sheet.save "test_output/sheet_3_columns.png"
-      end
-
-      it "creates a sprite-sheet in a single column" do
-        sheet = subject.to_spritesheet :columns => 1
-        sheet.should be_a Gosu::Image
-        sheet.width.should eq 28
-        sheet.height.should eq 24 * 5
-        sheet.save "test_output/sheet_column.png"
       end
     end
   end

@@ -22,22 +22,8 @@ describe Gale::Layer do
 
   describe "transparent_color" do
     it "gets transparent color" do
-      c = Gosu::Color.rgb(0, 0, 1)
+      c = 0x000001
       subject.map {|f| f.map(&:transparent_color) }.should eq [[c], [c], [c, c], [c], [c]]
-    end
-  end
-
-  describe "to_image" do
-    it "creates a Gosu Image from the layer" do
-      subject.each_frame do |frame|
-        frame.each_layer do |layer|
-          image = layer.to_image
-          image.should be_a Gosu::Image
-          image.width.should eq 28
-          image.height.should eq 24
-          image.save "test_output/layer_#{frame.index}_#{layer.index}.png"
-        end
-      end
     end
   end
 
