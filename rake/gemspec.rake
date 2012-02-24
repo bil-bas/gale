@@ -31,7 +31,7 @@ def generate_gemspec
 
     s.test_files = Dir["test/**/*_spec.rb"]
 
-    s.add_runtime_dependency "ffi", "= 1.0.9" # Later versions bugged on Windows.
+    s.add_runtime_dependency "ffi", "~> 1.0.11" # Later versions bugged on Windows.
 
     s.add_development_dependency "gosu", "~> 0.7.41"
     s.add_development_dependency "texplay", "~> 0.3.5" # latest doesn't compile on Windows.
