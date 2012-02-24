@@ -7,18 +7,20 @@ module Gale
     end
 
     def name
-      buffer = FFI::Buffer.new STRING_BUFFER_SIZE
-      length = Dll.layer_name file.handle, frame.index, index, buffer, buffer.size
-      buffer.get_string 0
+      @name ||= begin
+        buffer = FFI::Buffer.new STRING_BUFFER_SIZE
+        length = Dll.layer_name file.send(:handle), frame.index, index, buffer, buffer.size
+        buffer.get_string 0
+      end
     end
 
     def transparent_color
-      color = Dll.layer_info file.handle, frame.index, index, Dll::FrameInfo::TRANSPARENT_COLOR
+      color = Dll.layer_info file.send(:handle), frame.index, index, Dll::FrameInfo::TRANSPARENT_COLOR
       Gosu::Color.rgb (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff
     end
 
     def export_bitmap(filename)
-      result = Dll.export_bitmap file.handle, frame.index, index, filename
+      result = Dll.export_bitmap file.send(:handle), frame.index, index, filename
       raise "Export failed" if result == 0
       nil
     end
@@ -38,7 +40,7 @@ module Gale
     end
 
     def export_alpha_channel(filename)
-      result = Dll.export_alpha_channel file.handle, frame.index, index, filename
+      result = Dll.export_alpha_channel file.send(:handle), frame.index, index, filename
       raise "Export failed" if result == 0
       nil
     end

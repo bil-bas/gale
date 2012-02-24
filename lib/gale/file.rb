@@ -5,7 +5,9 @@ module Gale
   class File
     include Enumerable
 
+    # Just for use by Frame/Layer
     attr_reader :handle
+    protected :handle
 
     def initialize(filename)
       @handle = Dll.open filename
@@ -46,11 +48,12 @@ module Gale
 
     def close
       Dll.close @handle
+      @handle = nil
     end
     
-    def height; Dll.info @handle, Dll::Info::HEIGHT; end
-    def width; Dll.info @handle, Dll::Info::WIDTH; end
-    def bits_per_pixel; Dll.info @handle, Dll::Info::BPP; end
+    def height; @height ||= Dll.info @handle, Dll::Info::HEIGHT; end
+    def width; @width ||= Dll.info @handle, Dll::Info::WIDTH; end
+    def bits_per_pixel; @bits_per_pixel ||= Dll.info @handle, Dll::Info::BPP; end
     def background_color
       # BUG: assumes 24-bit.
       color = Dll.info @handle, Dll::Info::BACKGROUND_COLOR

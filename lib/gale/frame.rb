@@ -6,7 +6,7 @@ module Gale
     def initialize(file, index)
       @file, @index = file, index
 
-      num_layers = Dll.layer_count file.handle, index
+      num_layers = Dll.layer_count file.send(:handle), index
       @layers = num_layers.times.map {|i| Layer.new file, self, i }
     end
 
@@ -23,22 +23,24 @@ module Gale
     end
 
     def name
-      buffer = FFI::Buffer.new Gale::STRING_BUFFER_SIZE
-      length = Dll.frame_name file.handle, index, buffer, buffer.size
-      buffer.get_string 0
+      @name ||= begin
+        buffer = FFI::Buffer.new Gale::STRING_BUFFER_SIZE
+        length = Dll.frame_name file.send(:handle), index, buffer, buffer.size
+        buffer.get_string 0
+      end
     end
 
     def delay
-      Dll.frame_info file.handle, index, Dll::FrameInfo::DELAY_MS
+      Dll.frame_info file.send(:handle), index, Dll::FrameInfo::DELAY_MS
     end
 
     def transparent_color
-      color = Dll.frame_info file.handle, index, Dll::FrameInfo::TRANSPARENT_COLOR
+      color = Dll.frame_info file.send(:handle), index, Dll::FrameInfo::TRANSPARENT_COLOR
       Gosu::Color.rgb (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff
     end
 
     def export_bitmap(filename)
-      result = Dll.export_bitmap file.handle, index, -1, filename
+      result = Dll.export_bitmap file.send(:handle), index, -1, filename
       raise "Export failed" if result == 0
       nil
     end
