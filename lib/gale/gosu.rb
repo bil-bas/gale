@@ -22,7 +22,7 @@ module Gale
     # @option :column [Integer] (Float::INFINITY) Max number of columns to use.
     # @return Gosu::Image
     def to_spritesheet(options = {})
-      columns = options[:columns] || Float::INFINITY
+      columns = options[:columns] || (defined?(Float::INFINITY) ? Float::INFINITY : 1_000_000)
       columns = [columns, size].min
       rows = size.fdiv(columns).ceil
 

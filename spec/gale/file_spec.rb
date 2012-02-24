@@ -19,11 +19,11 @@ describe Gale::File do
       end
 
       it "fails if the file doesn't exist" do
-        ->{ described_class.new "blob.gal" }.should raise_error(Errno::ENOENT, /File not found/)
+        lambda { described_class.new "blob.gal" }.should raise_error(Errno::ENOENT, /File not found/)
       end
 
       it "fails if the file has a bad format" do
-        ->{ described_class.new __FILE__ }.should raise_error(Gale::FormatError, /File not in GraphicsGale format/)
+        lambda { described_class.new __FILE__ }.should raise_error(Gale::FormatError, /File not in GraphicsGale format/)
       end
     end
   end
