@@ -1,0 +1,7 @@
+.rspec
+.idea
+bin
+pkg
+coverage
+*.gemspec
+Gemfile.lock
