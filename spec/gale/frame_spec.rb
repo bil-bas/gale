@@ -1,12 +1,12 @@
 require File.expand_path "../../teststrap", __FILE__
 
-describe Gale::File do
+describe Gale::Frame do
   before :all do
     $window = Gosu::Window.new(10, 10, false)
   end
 
   subject do
-    described_class.new COP_RANGED
+    Gale::File.new COP_RANGED
   end
 
   after do
@@ -27,21 +27,21 @@ describe Gale::File do
   end
 
   describe "delay" do
-    it "gets delay, in ms, from the frame" do
+    it "gets delay, in ms" do
       subject.map(&:delay).should eq [500, 375, 125, 250, 250]
     end
   end
 
-  describe "frame_transparent_color" do
-    it "gets transparent_color from the frame" do
+  describe "transparent_color" do
+    it "gets transparent color" do
       subject.each do |frame|
         frame.transparent_color.should eq Gosu::Color.rgb(253, 77, 211)
       end
     end
   end
 
-  describe "frame_name" do
-    it "gets name of frame" do
+  describe "name" do
+    it "gets name" do
       subject.map(&:name).should eq %w[stand aim bang recoil recover]
     end
   end

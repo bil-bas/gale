@@ -69,7 +69,7 @@ describe Gale::File do
     end
 
     describe "to_spritesheet" do
-      it "creates a sprite_sheet in a single animation row" do
+      it "creates a sprite-sheet in a single animation row" do
         sheet = subject.to_spritesheet
         sheet.should be_a Gosu::Image
         sheet.width.should eq 28 * 5
@@ -77,7 +77,7 @@ describe Gale::File do
         sheet.save "test_output/sheet_row.png"
       end
 
-      it "creates a sprite_sheet in a grid" do
+      it "creates a sprite-sheet in a grid" do
         sheet = subject.to_spritesheet :columns => 3
         sheet.should be_a Gosu::Image
         sheet.width.should eq 28 * 3
@@ -85,7 +85,7 @@ describe Gale::File do
         sheet.save "test_output/sheet_3_columns.png"
       end
 
-      it "creates a sprite_sheet in a single column" do
+      it "creates a sprite-sheet in a single column" do
         sheet = subject.to_spritesheet :columns => 1
         sheet.should be_a Gosu::Image
         sheet.width.should eq 28
