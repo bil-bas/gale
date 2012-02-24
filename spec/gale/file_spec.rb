@@ -62,12 +62,28 @@ describe Gale::File do
     end
 
     describe "to_spritesheet" do
-      it "creates a full sprite_sheet" do
+      it "creates a sprite_sheet in a single animation row" do
         sheet = subject.to_spritesheet
         sheet.should be_a Gosu::Image
         sheet.width.should eq 28 * 5
         sheet.height.should eq 24
-        sheet.save "test_output/sheet.png"
+        sheet.save "test_output/sheet_1_row.png"
+      end
+
+      it "creates a sprite_sheet in a grid" do
+        sheet = subject.to_spritesheet :columns => 3
+        sheet.should be_a Gosu::Image
+        sheet.width.should eq 28 * 3
+        sheet.height.should eq 24 * 2
+        sheet.save "test_output/sheet_3_columns.png"
+      end
+
+      it "creates a sprite_sheet in a single column" do
+        sheet = subject.to_spritesheet :columns => 1
+        sheet.should be_a Gosu::Image
+        sheet.width.should eq 28
+        sheet.height.should eq 24 * 5
+        sheet.save "test_output/sheet_1_column.png"
       end
     end
 

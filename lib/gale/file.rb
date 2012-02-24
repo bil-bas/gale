@@ -86,22 +86,32 @@ module Gale
     def to_image(frame_index, layer_index = -1)
       # Hack because I have no idea how to make #to_blob properly.
       export_bitmap TMP_BITMAP, frame_index, layer_index
-      image = Gosu::Image.new $window, TMP_BITMAP, :caching => true
-      transparent_color = if layer_index == -1
-                            frame_transparent_color frame_index
-                          else
-                            layer_transparent_color frame_index, layer_index
-                          end
-      image.clear :dest_select => transparent_color, :tolerance => 0.001
 
-      ::File.delete TMP_BITMAP
+      begin
+        image = Gosu::Image.new $window, TMP_BITMAP, :caching => true
+        transparent_color = if layer_index == -1
+                              frame_transparent_color frame_index
+                            else
+                              layer_transparent_color frame_index, layer_index
+                            end
+        image.clear :dest_select => transparent_color, :tolerance => 0.001
+      ensure
+        ::File.delete TMP_BITMAP
+      end
+
       image
     end
 
-    def to_spritesheet
-      sheet = TexPlay.create_image $window, width * num_frames, height
+    # @option :column [Integer] (Float::INFINITY) Max number of columns to use.
+    def to_spritesheet(options = {})
+      columns = options[:columns] || Float::INFINITY
+      columns = [columns, num_frames].min
+      rows = num_frames.fdiv(columns).ceil
+
+      sheet = TexPlay.create_image $window, columns * width, rows * height
       num_frames.times do |frame_index|
-        sheet.splice to_image(frame_index), frame_index * width, 0
+        row, column = frame_index.divmod columns
+        sheet.splice to_image(frame_index), column * width, row * height
       end
       sheet
     end
