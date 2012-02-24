@@ -14,25 +14,25 @@ describe Gale::Frame do
   end
 
 
-  describe "size" do
+  describe "#size" do
     it "counts the layers in the frame" do
-      subject.map(&:size).should eq [1, 1, 2, 1, 1]
+      subject.map(&:size).should eq [1, 2, 2, 1, 1]
     end
   end
 
-  describe "index" do
+  describe "#index" do
     it "is the ordered index of the frame within the file" do
       subject.map(&:index).should eq [0, 1, 2, 3, 4]
     end
   end
 
-  describe "delay" do
+  describe "#delay" do
     it "gets delay, in ms" do
       subject.map(&:delay).should eq [500, 375, 125, 250, 250]
     end
   end
 
-  describe "transparent_color" do
+  describe "#transparent_color" do
     it "gets transparent color" do
       subject.each_frame do |frame|
         frame.transparent_color.should eq 0xfd4dd3
@@ -40,13 +40,13 @@ describe Gale::Frame do
     end
   end
 
-  describe "name" do
+  describe "#name" do
     it "gets name" do
       subject.map(&:name).should eq %w[stand aim bang recoil recover]
     end
   end
 
-  describe "export_bitmap" do
+  describe "#export_bitmap" do
     it "should export the composed frame as a bitmap" do
       subject.each do |frame|
         file = "test_output/frame_#{frame.index}.bmp"
@@ -56,6 +56,4 @@ describe Gale::Frame do
       end
     end
   end
-
-
 end

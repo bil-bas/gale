@@ -13,6 +13,8 @@ module Gale
     # Sensible size for string buffer.
     STRING_BUFFER_SIZE = 256
 
+    TRUE = 1
+
     # Returned by #last_error (ggGetLastError)
     module Error
       NONE = 0

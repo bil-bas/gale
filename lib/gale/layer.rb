@@ -14,6 +14,20 @@ module Gale
       end
     end
 
+    def visible?
+      @visible ||= Dll.layer_info(file.send(:handle), frame.index, index, Dll::LayerInfo::VISIBLE) == Dll::TRUE
+    end
+
+    def alpha_channel?
+      @alpha_channel ||= Dll.layer_info(file.send(:handle), frame.index, index, Dll::LayerInfo::ALPHA_CHANNEL) == Dll::TRUE
+    end
+
+    # Layer opacity
+    # @return [Integer] 0..255 for transparent to opaque.
+    def opacity
+      @opacity ||= Dll.layer_info file.send(:handle), frame.index, index, Dll::LayerInfo::OPACITY
+    end
+
     def transparent_color
       @transparent_color ||= Dll.layer_info file.send(:handle), frame.index, index, Dll::FrameInfo::TRANSPARENT_COLOR
     end
