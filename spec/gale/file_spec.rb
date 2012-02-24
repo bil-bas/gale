@@ -82,7 +82,7 @@ describe Gale::File do
 
     describe "#export_yaml" do
       it "should fail without any properties requested" do
-        lambda { subject.export_yaml "test_output/properties.yml", [] }.should raise_error(RuntimeError, /Must specify at least some :properties to export/)
+        lambda { subject.export_yaml "test_output/properties.yml", [] }.should raise_error(ArgumentError, /Must specify at least some :properties to export/)
       end
 
       it "generates a yaml properties file" do

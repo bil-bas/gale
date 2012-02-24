@@ -94,7 +94,7 @@ module Gale
         frame_data[:delay] = frame.delay                         if properties.include? :delay
         frame_data[:disposal] = frame.disposal                   if properties.include? :disposal
 
-        raise "Must specify at least some :properties to export" if frame_data.empty?
+        raise ArgumentError, "Must specify at least some :properties to export" if frame_data.empty?
 
         frame_data
       end
