@@ -17,5 +17,6 @@ Usage
 -----
 
     animation = Gale::File.new "jumping.gal"
-    puts animation.num_frames #=> 3
-    animation.export_bitmap "jumping_0.bmp", 0 # Saves the first frame as a bitmap.
+    puts animation.size #=> 3, which is the number of frames.
+    animation[0].export_bitmap "jumping_0.bmp" # Saves the first frame as a bitmap.
+    animation.to_spritesheet.save "jumping.png" # Export as a Gosu image and save it as a png.
