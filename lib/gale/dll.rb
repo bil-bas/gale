@@ -10,6 +10,9 @@ module Gale
     ffi_lib 'galefile'
     ffi_convention :stdcall
 
+    # Sensible size for string buffer.
+    STRING_BUFFER_SIZE = 256
+
     # Returned by #last_error (ggGetLastError)
     module Error
       NONE = 0

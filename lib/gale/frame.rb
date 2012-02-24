@@ -26,7 +26,7 @@ module Gale
 
     def name
       @name ||= begin
-        buffer = FFI::Buffer.new Gale::STRING_BUFFER_SIZE
+        buffer = FFI::Buffer.new Dll::STRING_BUFFER_SIZE
         length = Dll.frame_name file.send(:handle), index, buffer, buffer.size
         buffer.get_string 0, length
       end

@@ -1,3 +1,5 @@
+require 'tempfile'
+
 require 'gosu'
 require 'texplay'
 
@@ -37,13 +39,16 @@ module Gale
     # @return Gosu::Image
     def to_image
       # Hack because I have no idea how to make #to_blob properly.
-      export_bitmap TMP_BITMAP
-
+      file = Tempfile.new 'gale_bitmap'
+      image = nil
       begin
-        image = Gosu::Image.new $window, Gale::TMP_BITMAP, :caching => true
+        file.close # Don't actually use it directly, since we are going to overwrite it.
+        export_bitmap file.path
+
+        image = Gosu::Image.new $window, file.path, :caching => true
         image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
       ensure
-        ::File.delete TMP_BITMAP
+        file.unlink
       end
 
       image
@@ -54,13 +59,16 @@ module Gale
     # @return Gosu::Image
     def to_image
       # Hack because I have no idea how to make #to_blob properly.
-      export_bitmap TMP_BITMAP
-
+      file = Tempfile.new 'gale_bitmap'
+      image = nil
       begin
-        image = Gosu::Image.new $window, Gale::TMP_BITMAP, :caching => true
+        file.close # Don't actually use it directly, since we are going to overwrite it.
+        export_bitmap file.path
+
+        image = Gosu::Image.new $window, file.path, :caching => true
         image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
       ensure
-        ::File.delete TMP_BITMAP
+        file.unlink
       end
 
       image
