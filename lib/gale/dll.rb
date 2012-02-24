@@ -3,19 +3,36 @@ require 'ffi'
 ENV['PATH'] = File.expand_path("../../../bin", __FILE__) + File::PATH_SEPARATOR + ENV['PATH']
 
 module Gale
-  # Directly exposes galefile.dll to Ruby
+
   module GDIPlus
     extend FFI::Library
     ffi_lib 'gdiplus'
-    #ffi_convention :stdcall
+    ffi_convention :stdcall
 
-    #static Bitmap* FromHBITMAP(
-    #    [in]  HBITMAP hbm,
-    #    [in]  HPALETTE hpal
-    #);
-    #attach_function :from_hbitmap, "Bitmap::FromHBITMAP", [:pointer, :pointer], :pointer
+    # GpStatus WINGDIPAPI
+    # GdipCreateBitmapFromHBITMAP(HBITMAP hbm, HPALETTE hpal, GpBitmap** bitmap);
+    #
+    attach_function :bitmap_from_hbitmap, :GdipCreateBitmapFromHBITMAP, [:pointer, :pointer, :pointer], :long
+
   end
 
+  module GDI32
+    extend FFI::Library
+    ffi_lib 'gdi32'
+    ffi_convention :stdcall
+    # int GetDIBits(
+    #     __in     HDC hdc,
+    #     __in     HBITMAP hbmp,
+    #     __in     UINT uStartScan,
+    #     __in     UINT cScanLines,
+    #     __out    LPVOID lpvBits,
+    #     __inout  LPBITMAPINFO lpbi,
+    #     __in     UINT uUsage
+    # );
+    attach_function :bitmap_to_blob, :GetDIBits, [:pointer, :pointer, :uint, :uint, :buffer_out, :pointer, :uint], :long
+  end
+
+  # Directly exposes galefile.dll to Ruby
   module Dll
     extend FFI::Library
 
@@ -25,11 +42,11 @@ module Gale
     # Returned by #last_error (ggGetLastError)
     module Error
       NONE = 0
-      FILE_NOT_FOUND = 1
-      BAD_FORMAT = 2
-      CANNOT_BE_CLOSED = 3
-      INVALID_ADDRESS = 4
-      PARAMETER_INVALID = 5
+      FILE_NOT_FOUND = 1      # File does not exist.
+      BAD_FORMAT = 2          # File format is invalid.
+      CANNOT_BE_CLOSED = 3    # File can not be closed.
+      INVALID_ADDRESS = 4     # The address of gale object is invalid.
+      PARAMETER_INVALID = 5   # Parameter is invalid.
     end
     
     # Passed to #info (ggGetInfo)
@@ -53,6 +70,13 @@ module Gale
         BACKGROUND_FILL = 2 # Filled by the background-color.
         RESTORE_PREVIOUS = 3 # Restored to previous state.
       end
+    end
+
+    module LayerInfo
+      VISIBLE = 1           # If the layer is visible, return value is 1.
+      TRANSPARENT_COLOR = 2 # Return value is the transparent color.
+      OPACITY = 3           # Return value is the opacity(0~255).
+      ALPHA_CHANNEL = 4     # If the alpha-channel is effective, return value is 1
     end
     
     # typedef struct tagBITMAP {

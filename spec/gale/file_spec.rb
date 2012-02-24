@@ -61,6 +61,16 @@ describe Gale::File do
       end
     end
 
+    describe "to_spritesheet" do
+      it "creates a full sprite_sheet" do
+        sheet = subject.to_spritesheet
+        sheet.should be_a Gosu::Image
+        sheet.width.should eq 28 * 5
+        sheet.height.should eq 24
+        sheet.save "test_output/sheet.png"
+      end
+    end
+
     context "frames" do
       describe "num_layers" do
         it "counts the layers in every available frame" do
@@ -74,7 +84,7 @@ describe Gale::File do
         end
       end
 
-      describe "transparent_color" do
+      describe "frame_transparent_color" do
         it "gets transparent_color from each frame" do
           subject.num_frames.times do |f|
             subject.frame_transparent_color(f).should eq Gosu::Color.rgb(253, 77, 211)
@@ -99,6 +109,18 @@ describe Gale::File do
         end
       end
 
+      describe "to_image" do
+        it "creates a Gosu Image" do
+          subject.num_frames.times do |frame|
+            image = subject.to_image frame
+            image.should be_a Gosu::Image
+            image.width.should eq 28
+            image.height.should eq 24
+            image.save "test_output/frame_#{frame}.png"
+          end
+        end
+      end
+
       describe "to_blob" do
         it "generates a binary blob" do
           #p subject.to_blob(0, 0)
@@ -119,6 +141,30 @@ describe Gale::File do
                 subject.layer_name(f, l)
               end
             end.should eq [%w[Layer1], %w[Layer1], %w[cop flare], %w[Layer1], %w[Layer1]]
+          end
+        end
+
+        describe "layer_transparent_color" do
+          it "gets transparent_color from each frame" do
+            subject.num_frames.times do |frame|
+              subject.num_layers(frame).times do |layer|
+                subject.layer_transparent_color(frame, layer).should eq Gosu::Color.rgb(0, 0, 1)
+              end
+            end
+          end
+        end
+
+        describe "to_image" do
+          it "creates a Gosu Image" do
+            subject.num_frames.times do |frame|
+              subject.num_layers(frame).times do |layer|
+                image = subject.to_image frame, layer
+                image.should be_a Gosu::Image
+                image.width.should eq 28
+                image.height.should eq 24
+                image.save "test_output/layer_#{frame}_#{layer}.png"
+              end
+            end
           end
         end
 

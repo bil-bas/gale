@@ -1,3 +1,5 @@
+require 'tempfile'
+
 require 'gosu'
 require 'texplay'
 
@@ -7,6 +9,7 @@ module Gale
   # A GraphicsGale image, containing Frames and Layers.
   class File
     STRING_BUFFER_SIZE = 256
+    TMP_BITMAP = (ENV['TMP'] || ENV['TEMP']) + "/tmp.bmp"
 
     def initialize(filename)
       @handle = Dll.open filename
@@ -47,6 +50,11 @@ module Gale
       buffer.get_string 0
     end
 
+    def layer_transparent_color(frame_index, layer_index)
+      color = Dll.layer_info @handle, frame_index, layer_index, Dll::FrameInfo::TRANSPARENT_COLOR
+      Gosu::Color.rgb (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff
+    end
+
     def num_layers(frame_index)
       Dll.layer_count @handle, frame_index
     end
@@ -66,13 +74,37 @@ module Gale
     
     # layer -1 gives the combined image of the frame.
     def to_blob(frame_index, layer_index = -1)
+      raise NotImplementedError
+
       hbitmap = Dll.bitmap @handle, frame_index, layer_index
       palette = Dll.palette @handle, frame_index
       bitmap = GDIPlus.from_hbitmap hbitmap, palette
-      p bitmap
       #bitmap.values[:bits].get_string 0, (bitmap.bits_per_pixel / 8) * bitmap.height * bitmap.width
       nil
-    end  
+    end
+
+    def to_image(frame_index, layer_index = -1)
+      # Hack because I have no idea how to make #to_blob properly.
+      export_bitmap TMP_BITMAP, frame_index, layer_index
+      image = Gosu::Image.new $window, TMP_BITMAP, :caching => true
+      transparent_color = if layer_index == -1
+                            frame_transparent_color frame_index
+                          else
+                            layer_transparent_color frame_index, layer_index
+                          end
+      image.clear :dest_select => transparent_color, :tolerance => 0.001
+
+      ::File.delete TMP_BITMAP
+      image
+    end
+
+    def to_spritesheet
+      sheet = TexPlay.create_image $window, width * num_frames, height
+      num_frames.times do |frame_index|
+        sheet.splice to_image(frame_index), frame_index * width, 0
+      end
+      sheet
+    end
 
     # layer -1 gives the combined image of the frame.
     def export_bitmap(filename, frame_index, layer_index = -1)
