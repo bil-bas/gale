@@ -6,7 +6,7 @@ module Gale
 
   # A GraphicsGale image, containing Frames and Layers.
   class File
-    BUFFER_SIZE = 1024
+    STRING_BUFFER_SIZE = 256
 
     def initialize(filename)
       @handle = Dll.open filename
@@ -27,9 +27,9 @@ module Gale
     end
     
     def frame_name(frame_index)
-      buffer = FFI::Buffer.alloc_out BUFFER_SIZE
+      buffer = FFI::Buffer.new STRING_BUFFER_SIZE
       length = Dll.frame_name @handle, frame_index, buffer, buffer.size
-      buffer.get_string length
+      buffer.get_string 0
     end
     
     def frame_delay(frame_index)
@@ -42,9 +42,9 @@ module Gale
     end
     
     def layer_name(frame_index, layer_index)
-      buffer = FFI::Buffer.alloc_out BUFFER_SIZE
+      buffer = FFI::Buffer.new STRING_BUFFER_SIZE
       length = Dll.layer_name @handle, frame_index, layer_index, buffer, buffer.size
-      buffer.get_string length
+      buffer.get_string 0
     end
 
     def num_layers(frame_index)

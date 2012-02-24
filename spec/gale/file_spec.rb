@@ -15,7 +15,7 @@ describe Gale::File do
 
   context "loaded an animation" do
     subject do
-      described_class.new  File.expand_path("../data/cop_ranged.gal", File.dirname(__FILE__))
+      described_class.new File.expand_path("../data/cop_ranged.gal", File.dirname(__FILE__))
     end
 
     after do
@@ -25,12 +25,6 @@ describe Gale::File do
     describe "num_frames" do
       it "counts the number of frames" do
         subject.num_frames.should eq 5
-      end
-    end
-
-    describe "num_layers" do
-      it "counts the layers in every available frame" do
-        subject.num_frames.times.map {|f| subject.num_layers f }.should eq [1, 1, 1, 1, 1]
       end
     end
 
@@ -58,23 +52,43 @@ describe Gale::File do
       end
     end
 
-    describe "frame_delay" do
-      it "gets delays from each frame" do
-        subject.num_frames.times.map {|f| subject.frame_delay(f) }.should eq [500, 375, 125, 250, 250]
-      end
-    end
-
-    describe "transparent_color" do
-      it "gets transparent_color from each frame" do
-        subject.num_frames.times do |f|
-          subject.frame_transparent_color(f).should eq Gosu::Color.rgb(253, 77, 211)
+    context "frames" do
+      describe "num_layers" do
+        it "counts the layers in every available frame" do
+          subject.num_frames.times.map {|f| subject.num_layers f }.should eq [1, 1, 2, 1, 1]
         end
       end
-    end
 
-    describe "frame_name" do
-      it "gets frame names" do
-        subject.num_frames.times.map {|f| subject.frame_name(f) }.should eq %w[0 1 2 3 4]
+      describe "frame_delay" do
+        it "gets delays from each frame" do
+          subject.num_frames.times.map {|f| subject.frame_delay(f) }.should eq [500, 375, 125, 250, 250]
+        end
+      end
+
+      describe "transparent_color" do
+        it "gets transparent_color from each frame" do
+          subject.num_frames.times do |f|
+            subject.frame_transparent_color(f).should eq Gosu::Color.rgb(253, 77, 211)
+          end
+        end
+      end
+
+      describe "frame_name" do
+        it "gets frame names" do
+          subject.num_frames.times.map {|f| subject.frame_name(f) }.should eq %w[stand aim bang recoil recover]
+        end
+      end
+
+      context "layers" do
+        describe "layer_name" do
+          it "gets layer names" do
+            subject.num_frames.times.map do |f|
+              subject.num_layers(f).times.map do |l|
+                subject.layer_name(f, l)
+              end
+            end.should eq [%w[Layer1], %w[Layer1], %w[cop flare], %w[Layer1], %w[Layer1]]
+          end
+        end
       end
     end
   end
