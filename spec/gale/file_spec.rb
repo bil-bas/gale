@@ -6,7 +6,7 @@ describe Gale::File do
   end
 
   context "class" do
-    describe "new" do
+    describe ".new" do
       it "accepts a block and auto-closes" do
         yielded = false
 
@@ -38,31 +38,31 @@ describe Gale::File do
     end
 
 
-    describe "size" do
+    describe "#size" do
       it "counts the number of frames" do
         subject.size.should eq 5
       end
     end
 
-    describe "width" do
+    describe "#width" do
       it "gets the width" do
         subject.width.should eq 28
       end
     end
 
-    describe "height" do
+    describe "#height" do
       it "gets the height" do
         subject.height.should eq 24
       end
     end
 
-    describe "background_color" do
+    describe "#background_color" do
       it "gets the color" do
         subject.background_color.should eq 0xffffff
       end
     end
 
-    describe "bits_per_pixel" do
+    describe "#bits_per_pixel" do
       it "gets the bbp" do
         subject.bits_per_pixel.should eq 24
       end
