@@ -18,6 +18,10 @@ module Gale
       @layers.size
     end
 
+    def [](layer_index)
+      @layers[layer_index]
+    end
+
     def name
       buffer = FFI::Buffer.new Gale::STRING_BUFFER_SIZE
       length = Dll.frame_name file.handle, index, buffer, buffer.size

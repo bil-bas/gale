@@ -40,6 +40,10 @@ module Gale
       @frames.size
     end
 
+    def [](frame_index)
+      @frames[frame_index]
+    end
+
     def close
       Dll.close @handle
     end
