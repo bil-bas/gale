@@ -34,9 +34,11 @@ module Gale
       end
     end
 
-    def each(&block)
+    def each_frame(&block)
       @frames.each(&block)
     end
+
+    alias_method :each, :each_frame
 
     def size
       @frames.size

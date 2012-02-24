@@ -10,9 +10,11 @@ module Gale
       @layers = num_layers.times.map {|i| Layer.new file, self, i }
     end
 
-    def each(&block)
+    def each_layer(&block)
       @layers.each(&block)
     end
+
+    alias_method :each, :each_layer
 
     def size
       @layers.size

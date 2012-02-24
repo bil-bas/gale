@@ -29,8 +29,8 @@ describe Gale::Layer do
 
   describe "to_image" do
     it "creates a Gosu Image from the layer" do
-      subject.each do |frame|
-        frame.each do |layer|
+      subject.each_frame do |frame|
+        frame.each_layer do |layer|
           image = layer.to_image
           image.should be_a Gosu::Image
           image.width.should eq 28
@@ -43,8 +43,8 @@ describe Gale::Layer do
 
   describe "export_bitmap" do
     it "should export the layer as a bitmap" do
-      subject.each do |frame|
-        frame.each do |layer|
+      subject.each_frame do |frame|
+        frame.each_layer do |layer|
           file = "test_output/layer_#{frame.index}_#{layer.index}.bmp"
           layer.export_bitmap file
           File.exists?(file).should be_true
@@ -56,8 +56,8 @@ describe Gale::Layer do
 
   describe "export_alpha_channel" do
     it "should export the alpha channel as a bitmap" do
-      subject.each do |frame|
-        frame.each do |layer|
+      subject.each_frame do |frame|
+        frame.each_layer do |layer|
           file = "test_output/alpha_channel_#{frame.index}_#{layer.index}.bmp"
           layer.export_alpha_channel file
           File.exists?(file).should be_true

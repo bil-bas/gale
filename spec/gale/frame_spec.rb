@@ -34,7 +34,7 @@ describe Gale::Frame do
 
   describe "transparent_color" do
     it "gets transparent color" do
-      subject.each do |frame|
+      subject.each_frame do |frame|
         frame.transparent_color.should eq Gosu::Color.rgb(253, 77, 211)
       end
     end
