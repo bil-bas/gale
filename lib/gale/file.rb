@@ -60,8 +60,23 @@ module Gale
     def height; @height ||= Dll.info @handle, Dll::Info::HEIGHT; end
     def width; @width ||= Dll.info @handle, Dll::Info::WIDTH; end
     def bits_per_pixel; @bits_per_pixel ||= Dll.info @handle, Dll::Info::BPP; end
+
     def background_color
       @background_color ||= Dll.info @handle, Dll::Info::BACKGROUND_COLOR
+    end
+
+    def transparency_disabled?
+      @transparency_disabled ||= begin
+        value = Dll.info @handle, Dll::Info::TRANSPARENCY_DISABLED
+        value == Dll::TRUE
+      end
+    end
+
+    def palette_single?
+      @palette_single ||= begin
+        value = Dll.info @handle, Dll::Info::PALETTE_SINGLE
+        value == Dll::TRUE
+      end
     end
   end
 end

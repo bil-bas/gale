@@ -67,5 +67,17 @@ describe Gale::File do
         subject.bits_per_pixel.should eq 24
       end
     end
+
+    describe "#transparency_disabled?" do
+      it "is true if transparency is disabled" do
+        subject.transparency_disabled?.should be_false
+      end
+    end
+
+    describe "#palette_single?" do
+      it "is true if there is a single palette" do
+        subject.palette_single?.should be_true
+      end
+    end
   end
 end
