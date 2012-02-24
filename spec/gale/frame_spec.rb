@@ -6,7 +6,7 @@ describe Gale::File do
   end
 
   subject do
-    described_class.new File.expand_path("../data/cop_ranged.gal", File.dirname(__FILE__))
+    described_class.new COP_RANGED
   end
 
   after do

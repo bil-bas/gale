@@ -22,6 +22,14 @@ module Gale
 
       num_frames = Dll.frame_count @handle
       @frames = num_frames.times.map {|i| Frame.new self, i }
+
+      if block_given?
+        begin
+          yield self
+        ensure
+          close
+        end
+      end
     end
 
     def each(&block)

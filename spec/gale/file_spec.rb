@@ -7,6 +7,17 @@ describe Gale::File do
 
   context "class" do
     describe "new" do
+      it "accepts a block and auto-closes" do
+        yielded = false
+
+        described_class.new COP_RANGED do |file|
+          file.should be_a described_class
+          file.should_receive(:close)
+          yielded = true
+        end
+        yielded.should be_true
+      end
+
       it "fails if the file doesn't exist" do
         ->{ described_class.new "blob.gal" }.should raise_error(Errno::ENOENT, /File not found/)
       end
@@ -19,7 +30,7 @@ describe Gale::File do
 
   context "loaded an animation" do
     subject do
-      described_class.new File.expand_path("../data/cop_ranged.gal", File.dirname(__FILE__))
+      described_class.new COP_RANGED
     end
 
     after do
