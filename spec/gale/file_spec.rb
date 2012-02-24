@@ -10,7 +10,7 @@ describe Gale::File do
       it "accepts a block and auto-closes" do
         yielded = false
 
-        described_class.new COP_RANGED do |file|
+        described_class.new COP_RANGED_GAL do |file|
           file.should be_a described_class
           file.should_receive(:close)
           yielded = true
@@ -30,7 +30,7 @@ describe Gale::File do
 
   context "loaded an animation" do
     subject do
-      described_class.new COP_RANGED
+      described_class.new COP_RANGED_GAL
     end
 
     after do

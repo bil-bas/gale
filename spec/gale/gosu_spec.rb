@@ -6,7 +6,7 @@ describe "Gosu extension" do
   end
 
   subject do
-    Gale::File.new COP_RANGED
+    Gale::File.new COP_RANGED_GAL
   end
 
   after do
@@ -33,6 +33,12 @@ describe "Gosu extension" do
         sheet.width.should eq 28 * 5
         sheet.height.should eq 24
         sheet.save "test_output/sheet_row.png"
+
+        expected = Gosu::Image.new $window, COP_RANGED_PNG
+        result = Gosu::Image.new $window, "test_output/sheet_row.png"
+        result.each do |c, x, y|
+          c.should eq expected[x, y]
+        end
       end
 
       it "creates a sprite-sheet in a grid" do

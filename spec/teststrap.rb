@@ -6,7 +6,8 @@ $LOAD_PATH.unshift File.expand_path "../../lib", __FILE__
 
 require "gale/gosu"
 
-COP_RANGED = File.expand_path("data/cop_ranged.gal", File.dirname(__FILE__))
+COP_RANGED_GAL = File.expand_path("data/cop_ranged.gal", File.dirname(__FILE__))
+COP_RANGED_PNG = File.expand_path("data/cop_ranged_export.png", File.dirname(__FILE__))
 
 # Clean any previous test output.
 ouput_directory = File.expand_path "../../test_output", __FILE__

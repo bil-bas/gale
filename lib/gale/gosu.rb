@@ -59,7 +59,11 @@ module Gale
 
         image = Gosu::Image.new options[:window], file.path, :caching => true
         if transparent_color?
-          image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
+          # We want only to clear the alpha channel, not the whole bit to transparent black.
+          color_to_replace = Gosu::Color.from_gale(transparent_color)
+          replace_with = color_to_replace.dup
+          replace_with.alpha = 0
+          image.clear :dest_select => color_to_replace, :tolerance => 0.001, :color => replace_with
         end
       ensure
         file.unlink
@@ -78,18 +82,47 @@ module Gale
       }.merge! options
 
       # Hack because I have no idea how to make #to_blob properly.
-      file = Tempfile.new 'gale_bitmap'
+      bitmap = Tempfile.new 'gale_bitmap'
+      alpha_channel = alpha_channel? ? Tempfile.new('gale_alpha_channel') : nil
       image = nil
       begin
-        file.close # Don't actually use it directly, since we are going to overwrite it.
-        export_bitmap file.path
+        bitmap.close # Don't actually use it directly, since we are going to overwrite it.
+        export_bitmap bitmap.path
 
-        image = Gosu::Image.new options[:window], file.path, :caching => true
+        if alpha_channel
+          alpha_channel.close
+          export_alpha_channel alpha_channel.path
+        end
+
+        image = Gosu::Image.new options[:window], bitmap.path, :caching => true
+        if alpha_channel?
+          # Multiply by alpha channel image.
+          ac_image = Gosu::Image.new options[:window], alpha_channel.path, :caching => true
+          image.splice ac_image, 0, 0, :color_control => lambda {|pixel, alpha|
+            # alpha will be black to white (transparent to opaque).
+            pixel[3] *= alpha[0]
+            pixel
+          }
+        end
+
         if transparent_color?
-          image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
+          color_to_replace = Gosu::Color.from_gale(transparent_color)
+          replace_with = color_to_replace.dup
+          replace_with.alpha = 0
+          image.clear :dest_select => color_to_replace, :tolerance => 0.001, :color => replace_with
+        end
+
+        # Fade out if opacity is low.
+        if opacity < 255
+          factor = opacity / 255.0
+          image.each do |c|
+            c[3] *= factor
+            c
+          end
         end
       ensure
-        file.unlink
+        bitmap.unlink
+        alpha_channel.unlink if alpha_channel
       end
 
       image

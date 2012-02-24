@@ -6,7 +6,7 @@ describe Gale::Layer do
   end
 
   subject do
-    Gale::File.new COP_RANGED
+    Gale::File.new COP_RANGED_GAL
   end
 
   after do
