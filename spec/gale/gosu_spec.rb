@@ -68,6 +68,12 @@ describe "Gosu extension" do
           image.width.should eq 28
           image.height.should eq 24
           image.save "test_output/frame_#{frame.index}.png"
+
+          expected = Gosu::Image.new $window, File.expand_path("../../data/cop_ranged%04d.png" % frame.index, __FILE__)
+          result = Gosu::Image.new $window, "test_output/frame_#{frame.index}.png"
+          result.each do |c, x, y|
+            c.should eq expected[x, y]
+          end
         end
       end
     end

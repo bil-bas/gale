@@ -34,6 +34,7 @@ module Gale
       rows = size.fdiv(columns).ceil
 
       sheet = TexPlay.create_image options[:window], columns * width, rows * height, :caching => true
+
       each do |frame|
         row, column = frame.index.divmod columns
         sheet.splice frame.to_image, column * width, row * height
@@ -51,13 +52,15 @@ module Gale
       }.merge! options
 
       # Hack because I have no idea how to make #to_blob properly.
-      file = Tempfile.new 'gale_bitmap'
+      bitmap = Tempfile.new 'gale_bitmap'
       image = nil
       begin
-        file.close # Don't actually use it directly, since we are going to overwrite it.
-        export_bitmap file.path
+        bitmap.close # Don't actually use it directly, since we are going to overwrite it.
+        export_bitmap bitmap.path
 
-        image = Gosu::Image.new options[:window], file.path, :caching => true
+        image = Gosu::Image.new options[:window], bitmap.path, :caching => true
+        # TODO: Should use disposal to add a background or whatever.
+
         if transparent_color?
           # We want only to clear the alpha channel, not the whole bit to transparent black.
           color_to_replace = Gosu::Color.from_gale(transparent_color)
@@ -66,7 +69,7 @@ module Gale
           image.clear :dest_select => color_to_replace, :tolerance => 0.001, :color => replace_with
         end
       ensure
-        file.unlink
+        bitmap.unlink
       end
 
       image
