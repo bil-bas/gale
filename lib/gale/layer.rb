@@ -28,8 +28,17 @@ module Gale
       @opacity ||= Dll.layer_info file.send(:handle), frame.index, index, Dll::LayerInfo::OPACITY
     end
 
+    # @return [Integer, nil] 0xRRGGBB or nil if transparency disabled.
     def transparent_color
-      @transparent_color ||= Dll.layer_info file.send(:handle), frame.index, index, Dll::FrameInfo::TRANSPARENT_COLOR
+      @transparent_color ||= begin
+        value = Dll.layer_info file.send(:handle), frame.index, index, Dll::LayerInfo::TRANSPARENT_COLOR
+        value == -1 ? nil : value
+      end
+    end
+
+    # @return [Boolean] true if a transparent color has been set.
+    def transparent_color?
+      not transparent_color.nil?
     end
 
     def export_bitmap(filename)

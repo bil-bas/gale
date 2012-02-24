@@ -36,8 +36,17 @@ module Gale
       @delay ||= Dll.frame_info file.send(:handle), index, Dll::FrameInfo::DELAY_MS
     end
 
+    # @return [Integer, nil] 0xRRGGBB or nil if transparency disabled.
     def transparent_color
-      @transparent_color ||= Dll.frame_info file.send(:handle), index, Dll::FrameInfo::TRANSPARENT_COLOR
+      @transparent_color ||= begin
+        value = Dll.frame_info file.send(:handle), index, Dll::FrameInfo::TRANSPARENT_COLOR
+        (value == -1) ? nil : value
+      end
+    end
+
+    # @return [Boolean] true if a transparent color has been set.
+    def transparent_color?
+      not transparent_color.nil?
     end
 
     # @return [:none, :no_disposal, :background, :previous]

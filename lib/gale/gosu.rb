@@ -46,7 +46,9 @@ module Gale
         export_bitmap file.path
 
         image = Gosu::Image.new $window, file.path, :caching => true
-        image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
+        if transparent_color?
+          image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
+        end
       ensure
         file.unlink
       end
@@ -66,7 +68,9 @@ module Gale
         export_bitmap file.path
 
         image = Gosu::Image.new $window, file.path, :caching => true
-        image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
+        if transparent_color?
+          image.clear :dest_select => Gosu::Color.from_gale(transparent_color), :tolerance => 0.001
+        end
       ensure
         file.unlink
       end

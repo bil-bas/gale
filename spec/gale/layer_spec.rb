@@ -22,9 +22,14 @@ describe Gale::Layer do
 
   describe "#transparent_color" do
     it "gets transparent color" do
-      # BUG: Seems to give visible? value, not actual transparent colour!
-      c = 0x000001
-      subject.map {|f| f.map(&:transparent_color) }.should eq [[c], [c, c], [c, c], [c], [c]]
+      c = 0xfd4dd3
+      subject.map {|f| f.map(&:transparent_color) }.should eq [[c], [nil, nil], [c, c], [nil], [c]]
+    end
+  end
+
+  describe "#transparent_color?" do
+    it "is true if transparent color is set" do
+      subject.map {|f| f.map(&:transparent_color?) }.should eq [[true], [false, false], [true, true], [false], [true]]
     end
   end
 

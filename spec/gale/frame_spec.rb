@@ -34,9 +34,14 @@ describe Gale::Frame do
 
   describe "#transparent_color" do
     it "gets transparent color" do
-      subject.each_frame do |frame|
-        frame.transparent_color.should eq 0xfd4dd3
-      end
+      c = 0xfd4dd3
+      subject.map(&:transparent_color).should eq [c, c, c, c, nil]
+    end
+  end
+
+  describe "#transparent_color?" do
+    it "is true if transparent color is set" do
+      subject.map(&:transparent_color?).should eq [true, true, true, true, false]
     end
   end
 
