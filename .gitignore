@@ -5,3 +5,4 @@ pkg
 coverage
 *.gemspec
 Gemfile.lock
+test_output

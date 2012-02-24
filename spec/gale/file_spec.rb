@@ -1,6 +1,15 @@
 require File.expand_path "../../teststrap", __FILE__
 
 describe Gale::File do
+  before :all do
+    $window = Gosu::Window.new(10, 10, false)
+
+    # Clean any previous test output.
+    ouput_directory = File.expand_path "../../../test_output", __FILE__
+    Dir["#{ouput_directory}/*.*"].each {|f| File.delete f }
+    File.mkdir ouput_directory unless File.exists? ouput_directory
+  end
+
   context "class" do
     describe "new" do
       it "fails if the file doesn't exist" do
@@ -79,6 +88,22 @@ describe Gale::File do
         end
       end
 
+      describe "export_bitmap" do
+        it "should export each composed frame as a bitmap" do
+          subject.num_frames.times do |frame|
+            file = "test_output/frame_#{frame}.bmp"
+            subject.export_bitmap(file, frame)
+            File.exists?(file).should be_true
+            File.size(file).should be > 0
+          end
+        end
+      end
+
+      describe "to_blob" do
+        #p subject.to_blob(0, 0)
+        #gosu_image = Gosu::Image.from_blob $window, gg_image.to_blob(0, 0), gg_image.width, gg_image.height
+      end
+
       context "layers" do
         describe "layer_name" do
           it "gets layer names" do
@@ -89,15 +114,20 @@ describe Gale::File do
             end.should eq [%w[Layer1], %w[Layer1], %w[cop flare], %w[Layer1], %w[Layer1]]
           end
         end
+
+        describe "export_bitmap" do
+          it "should export each frame as a bitmap" do
+            subject.num_frames.times do |frame|
+              subject.num_layers(frame).times do |layer|
+                file = "test_output/layer_#{frame}_#{layer}.bmp"
+                subject.export_bitmap(file, frame, layer)
+                File.exists?(file).should be_true
+                File.size(file).should be > 0
+              end
+            end
+          end
+        end
       end
     end
   end
-
-=begin
-  gg_image.num_frames.times {|f| subject.export_as_bitmap("frame_#{f}.bmp", f) }
-
-  gg_image.to_blob(0, 0)
-  $window = Gosu::Window.new(10, 10, false)
-  gosu_image = Gosu::Image.from_blob $window, gg_image.to_blob(0, 0), gg_image.width, gg_image.height
-=end
 end
