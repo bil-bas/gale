@@ -46,6 +46,12 @@ describe Gale::Frame do
     end
   end
 
+  describe "#disposal" do
+    it "gets disposal method" do
+      subject.map(&:disposal).should eq [:background, :previous, :background, :no_disposal, :none]
+    end
+  end
+
   describe "#export_bitmap" do
     it "should export the composed frame as a bitmap" do
       subject.each do |frame|

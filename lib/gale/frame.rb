@@ -40,6 +40,25 @@ module Gale
       @transparent_color ||= Dll.frame_info file.send(:handle), index, Dll::FrameInfo::TRANSPARENT_COLOR
     end
 
+    # @return [:none, :no_disposal, :background, :previous]
+    def disposal
+      @disposal ||= begin
+        value = Dll.frame_info file.send(:handle), index, Dll::FrameInfo::DISPOSAL
+        case value
+          when Dll::FrameInfo::Disposal::NOT_SPECIFIED
+            :none
+          when Dll::FrameInfo::Disposal::NOT_DISPOSED
+            :no_disposal
+          when Dll::FrameInfo::Disposal::BACKGROUND_FILL
+            :background
+          when Dll::FrameInfo::Disposal::RESTORE_PREVIOUS
+            :previous
+          else
+            raise "Unknown disposal value #{value}"
+        end
+      end
+    end
+
     def export_bitmap(filename)
       result = Dll.export_bitmap file.send(:handle), index, -1, filename
       raise "Export failed" if result == 0
