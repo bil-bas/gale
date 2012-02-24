@@ -100,8 +100,15 @@ describe Gale::File do
       end
 
       describe "to_blob" do
-        #p subject.to_blob(0, 0)
-        #gosu_image = Gosu::Image.from_blob $window, gg_image.to_blob(0, 0), gg_image.width, gg_image.height
+        it "generates a binary blob" do
+          #p subject.to_blob(0, 0)
+        end
+
+        it "can be made into a Gosu Image" do
+          #gosu_image = Gosu::Image.from_blob $window, subject.to_blob(0, 0), subject.width, subject.height
+          #gosu_image.width.should eq 28
+          #gosu_image.height.should eq 24
+        end
       end
 
       context "layers" do
@@ -116,11 +123,24 @@ describe Gale::File do
         end
 
         describe "export_bitmap" do
-          it "should export each frame as a bitmap" do
+          it "should export each layer as a bitmap" do
             subject.num_frames.times do |frame|
               subject.num_layers(frame).times do |layer|
                 file = "test_output/layer_#{frame}_#{layer}.bmp"
                 subject.export_bitmap(file, frame, layer)
+                File.exists?(file).should be_true
+                File.size(file).should be > 0
+              end
+            end
+          end
+        end
+
+        describe "export_alpha_channel" do
+          it "should export each alpha channel as a bitmap" do
+            subject.num_frames.times do |frame|
+              subject.num_layers(frame).times do |layer|
+                file = "test_output/alpha_channel_#{frame}_#{layer}.bmp"
+                subject.export_alpha_channel(file, frame, layer)
                 File.exists?(file).should be_true
                 File.size(file).should be > 0
               end

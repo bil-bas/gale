@@ -4,6 +4,18 @@ ENV['PATH'] = File.expand_path("../../../bin", __FILE__) + File::PATH_SEPARATOR 
 
 module Gale
   # Directly exposes galefile.dll to Ruby
+  module GDIPlus
+    extend FFI::Library
+    ffi_lib 'gdiplus'
+    #ffi_convention :stdcall
+
+    #static Bitmap* FromHBITMAP(
+    #    [in]  HBITMAP hbm,
+    #    [in]  HPALETTE hpal
+    #);
+    #attach_function :from_hbitmap, "Bitmap::FromHBITMAP", [:pointer, :pointer], :pointer
+  end
+
   module Dll
     extend FFI::Library
 
@@ -57,8 +69,8 @@ module Gale
              :width,          :long,
              :height,         :long,
              :width_bytes,    :long,
-             :planes,         :uint, 
-             :bits_per_pixel, :uint, 
+             :planes,         :uint16,
+             :bits_per_pixel, :uint16,
              :bits,           :pointer
     end
 
@@ -182,7 +194,7 @@ module Gale
     # Return:     If the function succeeds, the return value is the handle of
     # bitmap.
     # If the function fails, the return value is 0.
-    attach_function :bitmap, :ggGetBitmap, [:pointer, :long, :long], HBITMAP.ptr
+    attach_function :bitmap, :ggGetBitmap, [:pointer, :long, :long], :pointer
 
 =begin
 HBITMAP __stdcall ggGetAlphaChannel(LPVOID pFile,LONG frameNo,LONG layerNo);
@@ -194,7 +206,10 @@ HBITMAP __stdcall ggGetAlphaChannel(LPVOID pFile,LONG frameNo,LONG layerNo);
   Return:     If the function succeeds, the return value is the handle of
               bitmap.
               If the function fails, the return value is 0.
+=end
+    attach_function :alpha_channel, :ggGetAlphaChannel, [:pointer, :long, :long], :pointer
 
+=begin
 HPALETTE __stdcall ggGetPalette(LPVOID pFile,LONG frameNo);
   Contents:   Retrieves the handle of palette of specified frame.
               The handle must not be deleted.
@@ -203,7 +218,9 @@ HPALETTE __stdcall ggGetPalette(LPVOID pFile,LONG frameNo);
   Return:     If the function succeeds, the return value is the handle of
               palette.
               If the function fails, the return value is 0.
-
+=end
+    attach_function :palette, :ggGetPalette, [:pointer, :long], :pointer
+=begin
 LONG __stdcall ggDrawBitmap(LPVOID pFile,LONG frameNo,LONG layerNo,HDC toDC,LONG toX,LONG toY);
   Contents:   Draws the image of specified frame and layer to specified
               device context.
@@ -241,5 +258,7 @@ LONG __stdcall ggExportAlphaChannel(LPVOID pFile,LONG frameNo,LONG layerNo,LPCST
   Return:     If the function succeeds, the return value is 1.
               If the function fails, the return value is 0.
 =end
+
+    attach_function :export_alpha_channel, :ggExportAlphaChannel, [:pointer, :long, :long, :string], :long
   end
 end

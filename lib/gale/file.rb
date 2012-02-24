@@ -66,14 +66,23 @@ module Gale
     
     # layer -1 gives the combined image of the frame.
     def to_blob(frame_index, layer_index = -1)
-      bitmap = Dll.bitmap @handle, frame_index, layer_index 
-      #bitmap.pry
-      bitmap.values[:bits].get_string 0, (bitmap.bits_per_pixel / 8) * bitmap.height * bitmap.width
+      hbitmap = Dll.bitmap @handle, frame_index, layer_index
+      palette = Dll.palette @handle, frame_index
+      bitmap = GDIPlus.from_hbitmap hbitmap, palette
+      p bitmap
+      #bitmap.values[:bits].get_string 0, (bitmap.bits_per_pixel / 8) * bitmap.height * bitmap.width
+      nil
     end  
 
     # layer -1 gives the combined image of the frame.
     def export_bitmap(filename, frame_index, layer_index = -1)
       result = Dll.export_bitmap @handle, frame_index, layer_index, filename
+      raise "Export failed" if result == 0
+      nil
+    end
+
+    def export_alpha_channel(filename, frame_index, layer_index)
+      result = Dll.export_alpha_channel @handle, frame_index, layer_index, filename
       raise "Export failed" if result == 0
       nil
     end
