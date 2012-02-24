@@ -79,5 +79,23 @@ describe Gale::File do
         subject.palette_single?.should be_true
       end
     end
+
+    describe "#export_yaml" do
+      it "should fail without any properties requested" do
+        lambda { subject.export_yaml "test_output/properties.yml", [] }.should raise_error(RuntimeError, /Must specify at least some :properties to export/)
+      end
+
+      it "generates a yaml properties file" do
+        subject.export_yaml "test_output/properties.yml", [:name, :transparent_color, :transparent_color_hex, :delay, :disposal]
+        data = YAML.load_file "test_output/properties.yml"
+        data.should eq([
+            { :name => "stand",   :transparent_color => 0xfd4dd3, :transparent_color_hex => "fd4dd3", :delay => 500, :disposal => :background },
+            { :name => "aim",     :transparent_color => 0xfd4dd3, :transparent_color_hex => "fd4dd3", :delay => 375, :disposal => :previous },
+            { :name => "bang",    :transparent_color => 0xfd4dd3, :transparent_color_hex => "fd4dd3", :delay => 125, :disposal => :background },
+            { :name => "recoil",  :transparent_color => 0xfd4dd3, :transparent_color_hex => "fd4dd3", :delay => 250, :disposal => :no_disposal },
+            { :name => "recover", :transparent_color => nil,      :transparent_color_hex => nil,      :delay => 250, :disposal => :none }
+        ])
+      end
+    end
   end
 end

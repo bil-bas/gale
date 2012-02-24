@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Gale
   class FormatError < StandardError; end
 
@@ -77,6 +79,27 @@ module Gale
         value = Dll.info @handle, Dll::Info::PALETTE_SINGLE
         value == Dll::TRUE
       end
+    end
+
+    # @param properties [Array<Symbol>] One or more of [:name, :transparent_color, :transparent_color_hex, :delay, :disposal]
+    def export_yaml(filename, properties)
+      data = @frames.map do |frame|
+        frame_data = {}
+        frame_data[:name] = "".sub(//, frame.name)               if properties.include? :name
+
+        hex_color = frame.transparent_color? ? ("%06x" % frame.transparent_color) : nil
+        frame_data[:transparent_color] = frame.transparent_color if properties.include? :transparent_color
+        frame_data[:transparent_color_hex] = hex_color           if properties.include? :transparent_color_hex
+
+        frame_data[:delay] = frame.delay                         if properties.include? :delay
+        frame_data[:disposal] = frame.disposal                   if properties.include? :disposal
+
+        raise "Must specify at least some :properties to export" if frame_data.empty?
+
+        frame_data
+      end
+
+      ::File.open(filename, "w") {|f| f.puts data.to_yaml }
     end
   end
 end
